@@ -1,5 +1,6 @@
 ﻿using CustomJVM;
 using CustomJVM.ConstantPoolItems;
+using CustomJVM.Managers;
 
 using System;
 using System.Collections.Generic;
@@ -11,20 +12,21 @@ namespace CustomJVM
 {
     class Program
     {
-        static CP_Info[] GetAllTypesThatInheritCpInfo()
+        public static T[] GetAllTypesThatInheritT<T>()
         {
-            Type[] allTypes = Assembly.GetAssembly(typeof(CP_Info)).GetTypes().ToArray();
+            Type[] allTypes = Assembly.GetAssembly(typeof(T)).GetTypes().ToArray();
             Type[] allCP_InfoTypes = allTypes.Where((Type x) => x.IsSubclassOf(typeof(CP_Info))).ToArray();
-            return allCP_InfoTypes.Select((Type x) => (CP_Info)Activator.CreateInstance(x)).ToArray();
+            return allCP_InfoTypes.Select((Type x) => (T)Activator.CreateInstance(x)).ToArray();
         }
 
         static void Main(string[] args)
         {
-            CP_Info[] allConstantPoolItems = GetAllTypesThatInheritCpInfo();
+            #region Setup
+            CP_Info[] allConstantPoolItems = GetAllTypesThatInheritT<CP_Info>();
 
-            Dictionary<byte, Func<CP_Info>> map = new Dictionary<byte, Func<CP_Info>>(); 
+            Dictionary<byte, Func<CP_Info>> map = new Dictionary<byte, Func<CP_Info>>();
 
-            foreach(CP_Info item in allConstantPoolItems)
+            foreach (CP_Info item in allConstantPoolItems)
             {
                 map.Add(item.Tag, new Func<CP_Info>(() =>
                 {
@@ -40,18 +42,62 @@ namespace CustomJVM
             uint magic = hexDump.Read4();
             ushort minor_version = hexDump.Read2();
             ushort major_version = hexDump.Read2();
-            ushort constant_pool_count = hexDump.Read2();
+            #endregion
 
-            Constant_Pool constant_Pool = new Constant_Pool(constant_pool_count - 1);
+            #region ConstantPool
+            Constant_Pool constant_Pool = new Constant_Pool();
+            constant_Pool.Parse(ref hexDump, map);
+            #endregion
 
-            for(int i = 0; i < constant_pool_count - 1; i ++)
+            #region Interfaces
+            ushort access_Flags = hexDump.Read2();
+            ushort this_Class = hexDump.Read2();
+            ushort super_Class = hexDump.Read2();
+
+            ushort interfaces_Count = hexDump.Read2();
+            ushort[] interfaces = new ushort[interfaces_Count];
+            for(int i = 0; i < interfaces.Length; i ++)
             {
-                byte tag = hexDump.Read1();
-                CP_Info currentInfo = map[tag]();
-
-                currentInfo.Parse(ref hexDump);
-                constant_Pool.Set(currentInfo);
+                interfaces[i] = hexDump.Read2();
             }
+            #endregion
+
+            #region FieldInfo
+            FieldManager fieldManager = new FieldManager();
+            fieldManager.Parse(ref hexDump);
+            #endregion
+
+            #region MethodInfo
+            MethodManager methodManger = new MethodManager();
+            methodManger.Parse(ref hexDump);
+            #endregion
+
+            #region AttributeInfo
+            AttributeManager attributeManager = new AttributeManager();
+            attributeManager.Parse(ref hexDump);
+            #endregion
+
+
+            //make an enum for the commands and 09
+            //make a byte[] for parser
+            foreach(var info in methodManger)
+            {
+                CP_Utf8_Info currentUtf8 = (CP_Utf8_Info)constant_Pool[info.Name_Index - 1];
+                string currentString = currentUtf8.String();
+
+                CP_Utf8_Info descriptorUtf8 = (CP_Utf8_Info)constant_Pool[info.Descriptor_Index - 1];
+                string descriptorString = descriptorUtf8.String();
+
+                string MainDescriptorString = "([Ljava/lang/String;)V";
+                if (currentString == "main" && info.Access_Flags == 9 && descriptorString == MainDescriptorString)
+                {
+
+                }
+            }
+
         }
+
+        //////////////////////////////https://docs.oracle.com/javase/specs/jvms/se16/html/jvms-4.html
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

@@ -10,15 +10,38 @@ namespace CustomJVM
     {
         CP_Info[] cp_Info;
         int index;
-        public Constant_Pool(int size)
+        ushort length;
+
+        public CP_Info this[int index]
         {
-            cp_Info = new CP_Info[size];
+            get
+            {
+                return cp_Info[index];
+            }
+        }
+        public Constant_Pool()
+        {
         }
 
         public void Set(CP_Info input)
         {
             cp_Info[index] = input;
             index++;
+        }
+
+        public void Parse(ref Memory<byte> hexDump, Dictionary<byte, Func<CP_Info>> map)
+        {
+            length = (ushort)(hexDump.Read2() - 1);
+            cp_Info = new CP_Info[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                byte tag = hexDump.Read1();
+                CP_Info currentInfo = map[tag]();
+
+                currentInfo.Parse(ref hexDump);
+                Set(currentInfo);
+            }
         }
 
     }

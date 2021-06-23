@@ -1,5 +1,8 @@
-﻿using System;
+﻿using CustomJVM.ConstantPoolItems;
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -23,16 +26,16 @@ namespace CustomJVM
         public static ushort Read2(this ref Memory<byte> hexDump)
         {
             Span<ushort> newMemory = MemoryMarshal.Cast<byte, ushort>(hexDump.Span);
-            ushort returnValue = newMemory[0];
-            hexDump.Slice(2);
+            ushort returnValue = newMemory[0].ReverseBytes();
+            hexDump = hexDump.Slice(2);
             return returnValue;
         }
 
         public static uint Read4(this ref Memory<byte> hexDump)
         {
             Span<uint> newMemory = MemoryMarshal.Cast<byte, uint>(hexDump.Span);
-            uint returnValue = newMemory[0];
-            hexDump.Slice(4);
+            uint returnValue = newMemory[0].ReverseBytes();
+            hexDump = hexDump.Slice(4);
             return returnValue;
         }
 
@@ -52,6 +55,13 @@ namespace CustomJVM
             byte fourthByte = (byte)input;
 
             return (uint)((fourthByte << 24) | (thirdByte << 16) | (secondByte << 8) | firstByte);
+        }
+
+        public static string String(this CP_Utf8_Info info)
+        {
+            string returnString = new string(info.Bytes.Select((byte x) => (char)x).ToArray());
+
+            return returnString;
         }
     }
 }
