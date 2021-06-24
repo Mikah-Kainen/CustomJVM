@@ -14,15 +14,14 @@ namespace CustomJVM.Managers
         {
         }
 
-        public void Parse(ref Memory<byte> hexDump)
+        public void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool)
         {
             ushort method_Info_Count = hexDump.Read2();
             methods = new Method_Info[method_Info_Count];
             for (int i = 0; i < methods.Length; i ++)
             {
-
                 methods[i] = new Method_Info();
-                methods[i].Parse(ref hexDump);
+                methods[i].Parse(ref hexDump, constantPool);
             }
         }
 

@@ -8,10 +8,20 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
+using static CustomJVM.Enum;
+
 namespace CustomJVM
 {
     class Program
     {
+        public static Attribute_Info CreateAttribute_Info(ref Memory<byte> hexDump, Constant_Pool constantPool)
+        {
+            ushort name_Index = hexDump.Read2();
+            CP_Utf8_Info info = (CP_Utf8_Info)constantPool[name_Index - 1];
+            AttributeTypes type = (AttributeTypes)System.Enum.Parse(typeof(AttributeTypes), info.String());
+            return Dictionaries.EnumToAttribute[type](name_Index);
+        }
+
         public static T[] GetAllTypesThatInheritT<T>()
         {
             Type[] allTypes = Assembly.GetAssembly(typeof(T)).GetTypes().ToArray();
@@ -24,6 +34,7 @@ namespace CustomJVM
             #region Setup
             CP_Info[] allConstantPoolItems = GetAllTypesThatInheritT<CP_Info>();
 
+            
             Dictionary<byte, Func<CP_Info>> map = new Dictionary<byte, Func<CP_Info>>();
 
             foreach (CP_Info item in allConstantPoolItems)
@@ -64,17 +75,17 @@ namespace CustomJVM
 
             #region FieldInfo
             FieldManager fieldManager = new FieldManager();
-            fieldManager.Parse(ref hexDump);
+            fieldManager.Parse(ref hexDump, constant_Pool);
             #endregion
 
             #region MethodInfo
             MethodManager methodManger = new MethodManager();
-            methodManger.Parse(ref hexDump);
+            methodManger.Parse(ref hexDump, constant_Pool);
             #endregion
 
             #region AttributeInfo
             AttributeManager attributeManager = new AttributeManager();
-            attributeManager.Parse(ref hexDump);
+            attributeManager.Parse(ref hexDump, constant_Pool);
             #endregion
 
 

@@ -18,7 +18,7 @@ namespace CustomJVM
 
         }
 
-        public void Parse(ref Memory<byte> hexDump)
+        public void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool)
         {
             Access_Flags = hexDump.Read2();
             Name_Index = hexDump.Read2();
@@ -28,8 +28,8 @@ namespace CustomJVM
             Attributes = new Attribute_Info[Attributes_Count];
             for (int i = 0; i < Attributes.Length; i++)
             {
-                Attribute_Info current = new Attribute_Info();
-                current.Parse(ref hexDump);
+                Attribute_Info current = Program.CreateAttribute_Info(ref hexDump, constantPool);
+                current.Parse(ref hexDump, constantPool);
                 Attributes[i] = current;
             }
         }

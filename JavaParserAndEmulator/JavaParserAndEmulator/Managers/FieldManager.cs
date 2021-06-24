@@ -14,14 +14,14 @@ namespace CustomJVM.Managers
 
         }
 
-        public void Parse(ref Memory<byte> hexDump)
+        public void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool)
         {
             ushort field_Info_Count = hexDump.Read2();
             fields = new Field_Info[field_Info_Count];
             for(int i = 0; i < fields.Length; i ++)
             {
                 fields[i] = new Field_Info();
-                fields[i].Parse(ref hexDump);
+                fields[i].Parse(ref hexDump, constantPool);
             }
         }
         public IEnumerator<Field_Info> GetEnumerator()

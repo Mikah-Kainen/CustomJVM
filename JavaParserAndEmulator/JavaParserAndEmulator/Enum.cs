@@ -14,6 +14,13 @@ namespace CustomJVM
             ACC_STATIC =	0x0008,
         };
 
+        public enum AttributeTypes
+        {
+            Code,
+            LineNumberTable,
+            SourceFile
+        }
+
         //MethodAccessFlags
 
         //FieldAccessFlags

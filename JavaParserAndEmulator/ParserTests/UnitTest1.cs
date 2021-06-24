@@ -26,5 +26,34 @@ namespace ParserTests
         {
             Assert.Equal(expected, input.ReverseBytes());
         }
+
+        //[Theory]
+        //[]
+        //[]
+
+        //public void DoesSettupWork()
+        //{
+        //    CP_Info[] allConstantPoolItems = GetAllTypesThatInheritT<CP_Info>();
+
+
+        //    Dictionary<byte, Func<CP_Info>> map = new Dictionary<byte, Func<CP_Info>>();
+
+        //    foreach (CP_Info item in allConstantPoolItems)
+        //    {
+        //        map.Add(item.Tag, new Func<CP_Info>(() =>
+        //        {
+        //            return (CP_Info)Activator.CreateInstance(item.GetType());
+        //        }));
+        //    }
+
+
+        //    string filePath = "Program.class";
+        //    byte[] bytes = File.ReadAllBytes(filePath);
+        //    Memory<byte> hexDump = bytes.AsMemory();
+
+        //    uint magic = hexDump.Read4();
+        //    ushort minor_version = hexDump.Read2();
+        //    ushort major_version = hexDump.Read2();
+        //}
     }
 }

@@ -14,14 +14,14 @@ namespace CustomJVM.Managers
 
         }
 
-        public void Parse(ref Memory<byte> hexDump)
+        public void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool)
         {
             int attribute_Info_Count = hexDump.Read2();
             attributes = new Attribute_Info[attribute_Info_Count];
             for(int i = 0; i < attributes.Length; i ++)
             {
-                attributes[i] = new Attribute_Info();
-                attributes[i].Parse(ref hexDump);
+                attributes[i] = Program.CreateAttribute_Info(ref hexDump, constantPool);
+                attributes[i].Parse(ref hexDump, constantPool);
             }
         }
 

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
+using static CustomJVM.Enum;
+
 namespace CustomJVM
 {
     public static class Extensions
