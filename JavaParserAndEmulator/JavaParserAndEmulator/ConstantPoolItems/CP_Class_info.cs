@@ -9,7 +9,7 @@ namespace CustomJVM.ConstantPoolItems
         public override byte Tag { get => 0x7; }
         public ushort Name_Index { get; private set; }
 
-        public override void Parse(ref Memory<byte> hexDump)
+        public override void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool)
         {
             Name_Index = hexDump.Read2();
         }

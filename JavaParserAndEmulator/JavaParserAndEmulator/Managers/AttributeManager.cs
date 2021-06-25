@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CustomJVM.Managers
 {
-    public class AttributeManager : IEnumerable<Attribute_Info>
+    public class AttributeManager : IEnumerable<Attribute_Info>, IParseByRef
     {
         Attribute_Info[] attributes;
 

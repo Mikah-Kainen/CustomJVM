@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CustomJVM.Managers
 {
-    public class FieldManager : IEnumerable<Field_Info>
+    public class FieldManager : IEnumerable<Field_Info>, IParseByRef
     {
         Field_Info[] fields;
 

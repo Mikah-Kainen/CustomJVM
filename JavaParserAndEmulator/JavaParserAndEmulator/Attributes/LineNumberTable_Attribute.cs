@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CustomJVM.Attributes
 {
-    public class Line_Number_Table
+    public class Line_Number_Table : IParseByRef
     {
         public ushort Start_PC { get; private set; }
         public ushort Line_Number { get; private set; }
@@ -15,7 +15,7 @@ namespace CustomJVM.Attributes
 
         }
 
-        public void Parse(Memory<byte> hexDump)
+        public void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool)
         {
             Start_PC = hexDump.Read2();
             Line_Number = hexDump.Read2();
@@ -42,7 +42,7 @@ namespace CustomJVM.Attributes
             for(int i = 0; i < Line_Number_Tables.Length; i ++)
             {
                 Line_Number_Tables[i] = new Line_Number_Table();
-                Line_Number_Tables[i].Parse(hexDump);
+                Line_Number_Tables[i].Parse(ref hexDump, constantPool);
             }
 
         }

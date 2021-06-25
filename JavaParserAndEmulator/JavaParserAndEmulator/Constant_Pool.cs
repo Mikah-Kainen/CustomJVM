@@ -29,7 +29,7 @@ namespace CustomJVM
             index++;
         }
 
-        public void Parse(ref Memory<byte> hexDump, Dictionary<byte, Func<CP_Info>> map)
+        public void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool, Dictionary<byte, Func<CP_Info>> map)
         {
             length = (ushort)(hexDump.Read2() - 1);
             cp_Info = new CP_Info[length];
@@ -39,7 +39,7 @@ namespace CustomJVM
                 byte tag = hexDump.Read1();
                 CP_Info currentInfo = map[tag]();
 
-                currentInfo.Parse(ref hexDump);
+                currentInfo.Parse(ref hexDump, constantPool);
                 Set(currentInfo);
             }
         }

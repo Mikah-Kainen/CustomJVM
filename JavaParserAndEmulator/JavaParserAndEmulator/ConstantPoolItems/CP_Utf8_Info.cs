@@ -9,7 +9,7 @@ namespace CustomJVM.ConstantPoolItems
         public override byte Tag { get => 1; }
         public ushort Length { get; private set; }
         public byte[] Bytes { get; private set; }
-        public override void Parse(ref Memory<byte> hexDump)
+        public override void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool)
         {
             Length = hexDump.Read2();
             Bytes = new byte[Length];

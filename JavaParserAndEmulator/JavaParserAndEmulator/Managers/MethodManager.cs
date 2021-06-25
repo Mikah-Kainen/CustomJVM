@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CustomJVM.Managers
 {
-    public class MethodManager : IEnumerable<Method_Info>
+    public class MethodManager : IEnumerable<Method_Info>, IParseByRef
     {
 
         Method_Info[] methods;

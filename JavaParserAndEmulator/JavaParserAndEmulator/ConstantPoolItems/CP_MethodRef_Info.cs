@@ -10,7 +10,7 @@ namespace CustomJVM.ConstantPoolItems
         public ushort Class_Index { get; private set; }
         public ushort Name_And_Type_Index { get; private set; }
 
-        public override void Parse(ref Memory<byte> hexDump)
+        public override void Parse(ref Memory<byte> hexDump, Constant_Pool constantPool)
         {
             Class_Index = hexDump.Read2();
             Name_And_Type_Index = hexDump.Read2();

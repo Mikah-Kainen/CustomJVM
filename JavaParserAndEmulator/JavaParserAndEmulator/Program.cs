@@ -1,4 +1,5 @@
 ﻿using CustomJVM;
+using CustomJVM.Attributes;
 using CustomJVM.ConstantPoolItems;
 using CustomJVM.Managers;
 
@@ -29,6 +30,8 @@ namespace CustomJVM
             return allCP_InfoTypes.Select((Type x) => (T)Activator.CreateInstance(x)).ToArray();
         }
 
+        public static Stack<uint?> Stack = new Stack<uint?>();
+
         static void Main(string[] args)
         {
             #region Setup
@@ -56,8 +59,8 @@ namespace CustomJVM
             #endregion
 
             #region ConstantPool
-            Constant_Pool constant_Pool = new Constant_Pool();
-            constant_Pool.Parse(ref hexDump, map);
+            Constant_Pool constantPool = new Constant_Pool();
+            constantPool.Parse(ref hexDump, constantPool, map);
             #endregion
 
             #region Interfaces
@@ -75,36 +78,44 @@ namespace CustomJVM
 
             #region FieldInfo
             FieldManager fieldManager = new FieldManager();
-            fieldManager.Parse(ref hexDump, constant_Pool);
+            fieldManager.Parse(ref hexDump, constantPool);
             #endregion
 
             #region MethodInfo
             MethodManager methodManger = new MethodManager();
-            methodManger.Parse(ref hexDump, constant_Pool);
+            methodManger.Parse(ref hexDump, constantPool);
             #endregion
 
             #region AttributeInfo
             AttributeManager attributeManager = new AttributeManager();
-            attributeManager.Parse(ref hexDump, constant_Pool);
+            attributeManager.Parse(ref hexDump, constantPool);
             #endregion
 
 
-            //make an enum for the commands and 09
-            //make a byte[] for parser
-            foreach(var info in methodManger)
+            #region SettupForCode
+
+            #endregion
+
+            #region RunCode
+            foreach (Method_Info info in methodManger)
             {
-                CP_Utf8_Info currentUtf8 = (CP_Utf8_Info)constant_Pool[info.Name_Index - 1];
+                CP_Utf8_Info currentUtf8 = (CP_Utf8_Info)constantPool[info.Name_Index - 1];
                 string currentString = currentUtf8.String();
 
-                CP_Utf8_Info descriptorUtf8 = (CP_Utf8_Info)constant_Pool[info.Descriptor_Index - 1];
+                CP_Utf8_Info descriptorUtf8 = (CP_Utf8_Info)constantPool[info.Descriptor_Index - 1];
                 string descriptorString = descriptorUtf8.String();
 
                 string MainDescriptorString = "([Ljava/lang/String;)V";
                 if (currentString == "main" && info.Access_Flags == 9 && descriptorString == MainDescriptorString)
                 {
-
+                    info.Execute(constantPool, methodManger);
                 }
             }
+
+
+            #endregion
+
+
 
         }
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CustomJVM
 {
-    public abstract class Attribute_Info
+    public abstract class Attribute_Info : IParseByRef
     {
 
         public ushort Attribute_Name_Index { get; }
